@@ -1,0 +1,8 @@
+build.sh
+*.tgz
+dist
+__mocks__
+css
+dist-transpiled
+node_modules
+.DS_Store
