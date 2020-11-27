@@ -1,5 +1,6 @@
 import { AnimationBuilder } from '@ionic/core';
 import React from 'react';
+import ReactDom from 'react-dom';
 
 import { NavContext } from '../contexts/NavContext';
 import { RouterOptions } from '../models';
@@ -24,13 +25,9 @@ export const createReactComponent = <PropType, ElementType>(
   const displayName = dashToPascalCase(tagName);
   const ReactComponent = class extends React.Component<IonicReactInternalProps<PropType>> {
     context!: React.ContextType<typeof NavContext>;
-    ref: React.RefObject<HTMLElement>;
 
     constructor(props: IonicReactInternalProps<PropType>) {
       super(props);
-      // If we weren't given a ref to forward, we still need one
-      // in order to attach props to the wrapped element.
-      this.ref = React.createRef();
     }
 
     componentDidMount() {
@@ -38,9 +35,7 @@ export const createReactComponent = <PropType, ElementType>(
     }
 
     componentDidUpdate(prevProps: IonicReactInternalProps<PropType>) {
-      // Try to use the forwarded ref to get the child node.
-      // Otherwise, use the one we created.
-      const node = (this.props.forwardedRef || this.ref.current!) as HTMLElement;
+      const node = ReactDom.findDOMNode(this) as HTMLElement;
       attachProps(node, this.props, prevProps);
     }
 
@@ -69,7 +64,7 @@ export const createReactComponent = <PropType, ElementType>(
 
       const newProps: IonicReactInternalProps<PropType> = {
         ...propsToPass,
-        ref: forwardedRef || this.ref,
+        ref: forwardedRef,
         style
       };
 

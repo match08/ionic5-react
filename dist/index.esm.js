@@ -5,7 +5,7 @@ import { arrowBackSharp, caretBackSharp, chevronBack, chevronForward, close, clo
 import { isPlatform as isPlatform$1, getPlatforms as getPlatforms$1, alertController, loadingController, toastController as toastController$1, pickerController, actionSheetController as actionSheetController$1, modalController, popoverController, createAnimation } from '@ionic/core';
 export { IonicSafeString, createAnimation, createGesture, iosTransitionAnimation, mdTransitionAnimation, setupConfig } from '@ionic/core';
 import { __rest } from 'tslib';
-import ReactDOM from 'react-dom';
+import ReactDom from 'react-dom';
 
 const IonLifeCycleContext = /*@__PURE__*/ React.createContext({
     onIonViewWillEnter: () => { return; },
@@ -345,17 +345,12 @@ const createReactComponent = (tagName, routerLinkComponent = false) => {
                     this.context.navigate(routerLink, routerDirection, undefined, routerAnimation, routerOptions);
                 }
             };
-            // If we weren't given a ref to forward, we still need one
-            // in order to attach props to the wrapped element.
-            this.ref = React.createRef();
         }
         componentDidMount() {
             this.componentDidUpdate(this.props);
         }
         componentDidUpdate(prevProps) {
-            // Try to use the forwarded ref to get the child node.
-            // Otherwise, use the one we created.
-            const node = (this.props.forwardedRef || this.ref.current);
+            const node = ReactDom.findDOMNode(this);
             attachProps(node, this.props, prevProps);
         }
         render() {
@@ -372,7 +367,7 @@ const createReactComponent = (tagName, routerLinkComponent = false) => {
                 }
                 return acc;
             }, {});
-            const newProps = Object.assign(Object.assign({}, propsToPass), { ref: forwardedRef || this.ref, style });
+            const newProps = Object.assign(Object.assign({}, propsToPass), { ref: forwardedRef, style });
             if (routerLinkComponent) {
                 if (this.props.routerLink && !this.props.href) {
                     newProps.href = this.props.routerLink;
@@ -613,7 +608,7 @@ const createOverlayComponent = (displayName, controller) => {
             await this.overlay.present();
         }
         render() {
-            return ReactDOM.createPortal(this.props.isOpen ? this.props.children : null, this.el);
+            return ReactDom.createPortal(this.props.isOpen ? this.props.children : null, this.el);
         }
     }
     return React.forwardRef((props, ref) => {
